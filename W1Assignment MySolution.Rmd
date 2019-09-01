@@ -1,0 +1,140 @@
+---
+title: "DATA 607 - Week 1 Assignment"
+author: "Aysmel Aguasvivas"
+date: "9/1/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Assignment - Loading Data into a Data Frame
+
+Data: Mushroom Dataset in the UCI repository.
+Data URL: https://archive.ics.uci.edu/ml/datasets/Mushroom
+
+
+Let's first study the data in it's current state.
+```{r}
+require(ggplot2)
+theURL <- read.csv(url("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"))
+mushrooms <- data.frame(theURL)
+```
+
+Let's look at the summary of the data frame.
+```{r}
+summary(mushrooms)
+```
+
+Let's look at the first few entries of the data frame.
+```{r}
+head(mushrooms)
+```
+
+Let's take a subset of this data frame, and rename the columns to more appropriate title.
+```{r}
+mushrooms <- data.frame(Type = mushrooms$p, CapShape = mushrooms$x, Odor = mushrooms$p.1, Habitat = mushrooms$u)
+
+head(mushrooms)
+```
+
+Let's rename the values in the factors in order to make the data easier to understand at a glance.
+```{r}
+#Replace values in Type column
+levels(mushrooms$Type) <- c(levels(mushrooms$Type), "Edible", "Poisonous")
+mushrooms$Type[mushrooms$Type == "e"] <- "Edible"
+mushrooms$Type[mushrooms$Type == "p"] <- "Poisonous"
+mushrooms$Type <- factor(mushrooms$Type)
+
+#Replace values in CapShape column
+levels(mushrooms$CapShape) <- c(levels(mushrooms$CapShape), "Bell", "Conical", "Convex", "Flat", "Knobbed", "Sunken")
+mushrooms$CapShape[mushrooms$CapShape == "b"] <- "Bell"
+mushrooms$CapShape[mushrooms$CapShape == "c"] <- "Conical"
+mushrooms$CapShape[mushrooms$CapShape == "x"] <- "Convex"
+mushrooms$CapShape[mushrooms$CapShape == "f"] <- "Flat"
+mushrooms$CapShape[mushrooms$CapShape == "k"] <- "Knobbed"
+mushrooms$CapShape[mushrooms$CapShape == "s"] <- "Sunken"
+mushrooms$CapShape <- factor(mushrooms$CapShape)
+
+#Replace values in Odor column
+levels(mushrooms$Odor) <- c(levels(mushrooms$Odor), "Almond", "Anise", "Creosote", "Fishy", "Foul", "Musty", "None", "Pungent", "Spicy")
+mushrooms$Odor[mushrooms$Odor == "a"] <- "Almond"
+mushrooms$Odor[mushrooms$Odor == "l"] <- "Anise"
+mushrooms$Odor[mushrooms$Odor == "c"] <- "Creosote"
+mushrooms$Odor[mushrooms$Odor == "y"] <- "Fishy"
+mushrooms$Odor[mushrooms$Odor == "f"] <- "Foul"
+mushrooms$Odor[mushrooms$Odor == "m"] <- "Musty"
+mushrooms$Odor[mushrooms$Odor == "n"] <- "None"
+mushrooms$Odor[mushrooms$Odor == "p"] <- "Pungent"
+mushrooms$Odor[mushrooms$Odor == "s"] <- "Spicy"
+mushrooms$Odor <- factor(mushrooms$Odor)
+
+#Replace values in Habitat column
+levels(mushrooms$Habitat) <- c(levels(mushrooms$Habitat), "Grasses", "Leaves", "Meadows", "Paths", "Urban", "Waste", "Woods")
+mushrooms$Habitat[mushrooms$Habitat == "g"] <- "Grasses"
+mushrooms$Habitat[mushrooms$Habitat == "l"] <- "Leaves"
+mushrooms$Habitat[mushrooms$Habitat == "m"] <- "Meadows"
+mushrooms$Habitat[mushrooms$Habitat == "p"] <- "Paths"
+mushrooms$Habitat[mushrooms$Habitat == "u"] <- "Urban"
+mushrooms$Habitat[mushrooms$Habitat == "w"] <- "Waste"
+mushrooms$Habitat[mushrooms$Habitat == "d"] <- "Woods"
+mushrooms$Habitat <- factor(mushrooms$Habitat)
+
+summary(mushrooms)
+```
+
+```{r}
+head(mushrooms)
+```
+
+I want to be able to do comparisons between edible and poisonous mushrooms, so I will create a subset for each.
+```{r}
+edib <- subset(mushrooms, Type == 'Edible')
+pois <- subset(mushrooms, Type == 'Poisonous')
+```
+
+```{r}
+head(edib)
+summary(edib)
+```
+
+```{r}
+head(pois)
+summary(pois)
+```
+
+### Let's see the cap shapes of Poisonous and Edible mushrooms.
+```{r}
+ggplot(mushrooms, aes(y = Type, x = CapShape)) + ggtitle("Cap Shapes Distribution of Mushrooms") + geom_boxplot()
+barplot(table(edib$CapShape), main = "Cap Shapes Distribution of Edible Mushrooms")
+barplot(table(pois$CapShape), main = "Cap Shapes Distribution of Poisonous Mushrooms")
+```
+
+### Let's see the odor of Poisonous and Edible mushrooms.
+```{r}
+ggplot(mushrooms, aes(y = Type, x = Odor)) + ggtitle("Odor Distribution of Mushrooms") + geom_boxplot()
+barplot(table(edib$Odor), main = "Odor Distribution of Edible Mushrooms")
+barplot(table(pois$Odor), main = "Odor Distribution of Poisonous Mushrooms")
+```
+
+
+### Let's see the habitat of Poisonous and Edible mushrooms.
+```{r}
+ggplot(mushrooms, aes(y = Type, x = Habitat)) + ggtitle("Habitat Distribution of Mushrooms") + geom_boxplot()
+barplot(table(edib$Habitat), main = "Habitat Distribution of Edible Mushrooms")
+barplot(table(pois$Habitat), main = "Habitat Distribution of Poisonous Mushrooms")
+```
+
+
+## Conclusion
+This data shows that poisonous and edible mushrooms have some similarities in their cap shapes, odor, and habitat as some of the data overlaps, but there are also places of differentiation in the distribution.
+
+**Cap Shape** Looking at the *Cap Shapes Distribution of Mushrooms* table we can see that poisonous mushrooms have a wide range of possible cap shapes, but that a mushroom with a bell or sunken cap is more likely to be edible. However, it is still important to look at the *Cap Shapes Distribution of Poisonous Mushrooms* table and the *Cap Shapes Distribution of Edible Mushrooms* table, because it highlights that the majority of both kinds of mushrooms have the convex or flat cap shape.
+
+**Odor** Looking at the *Odor Distribution of Mushrooms* table we can see that poisonous mushrooms have a wide range of possible odors, except for anise or almond odor. The *Odor Distribution of Poisonous Mushrooms* table shows that most poisonous mushrooms have a foul odor, but they could still be odorless or have other scents. The *Odor Distribution of Edible Mushrooms* table shows that most edible mushrooms have no odor.
+
+**Habitat** Looking at the *Habitat Distribution of Mushrooms* table we both mushrooms have a wide range of overlapping habitats. The main differentiation is that edible mushrooms are mostly in the grasses or woods as shown by the *Habitat Distribution of Edible Mushrooms* table, whereas the poisnous mushrooms are distributed throughout more habitats.
+
+
+Overall, if you're lost in the grasses or woods and have to eat mushrooms, try to find a sunken cap mushroom with almond or anise odor.
