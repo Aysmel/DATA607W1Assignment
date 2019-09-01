@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Assignment - Loading Data into a Data Frame
+# Assignment - Loading Data into a Data Frame
 
 Data: Mushroom Dataset in the UCI repository.
 Data URL: https://archive.ics.uci.edu/ml/datasets/Mushroom
